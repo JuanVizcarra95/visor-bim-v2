@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Visor BIM Analítico</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div id="app">
+  <button id="menuBtn" class="menu-btn" aria-label="Abrir panel">☰</button>
+  <div id="scrim" class="scrim"></div>
+
+  <aside id="sidebar" class="sidebar">
+    <header class="brand">
+      <img src="/logo-empresa.png" alt="Logo de la empresa">
+      <div>
+        <h1>Visor BIM Analítico</h1>
+        <p>Consulta, segmentación y calidad</p>
+      </div>
+    </header>
+
+    <div class="actions">
+      <button id="filesBtn" class="secondary">Archivos</button>
+      <button id="refreshBtn" class="primary">Actualizar modelo</button>
+      <button id="captureBtn" class="secondary" type="button">Captura 4K</button>
+    </div>
+    
+    <div id="status" class="status" role="status">Conectando...</div>
+    <div id="progressWrap" class="progress-wrap hidden">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+
+    <nav class="tabs">
+      <button class="tab active" data-pane="explore">Explorar</button>
+      <button class="tab" data-pane="quality">Calidad</button>
+      <button class="tab" data-pane="props">Propiedades</button>
+    </nav>
+
+    <div class="content">
+      <section id="explore" class="pane active">
+        <div class="card grid">
+          <h2>Buscar y segmentar</h2>
+          <input id="query" placeholder="Buscar nombre o valor BIM…">
+          <div class="two">
+            <div class="parameter-picker">
+              <input id="searchPropertyFilter" class="parameter-filter" type="search" placeholder="Escribir para buscar parámetro…" autocomplete="off">
+              <select id="searchProperty">
+                <option value="*">Todas las propiedades</option>
+              </select>
+            </div>
+            <select id="operator">
+              <option value="contains">Contiene</option>
+              <option value="equals">Igual a</option>
+              <option value="gt">Mayor que</option>
+              <option value="lt">Menor que</option>
+            </select>
+          </div>
+          <button id="searchBtn" class="primary" disabled>Buscar</button>
+          
+          <div id="searchSummary" class="hint"></div>
+          <div id="results" class="results virtual-scroller">
+            <div class="vs-content"></div>
+          </div>
+          
+          <hr>
+          
+          <div class="parameter-picker">
+            <input id="propertyFilter" class="parameter-filter" type="search" placeholder="Escribir para buscar parámetro…" autocomplete="off" disabled>
+            <select id="property" disabled>
+              <option>Esperando modelo…</option>
+            </select>
+          </div>
+          <div class="two">
+            <select id="colorMode">
+              <option value="auto">Color automático</option>
+              <option value="categorical">Categórico</option>
+              <option value="continuous">Escala numérica</option>
+            </select>
+            <select id="palette">
+              <option value="10">10 colores</option>
+              <option value="15" selected>15 colores</option>
+            </select>
+          </div>
+          
+          <label class="hint check"><input id="isolate" type="checkbox" checked> Aislar resultados</label>
+          <label class="hint check"><input id="showSegmentLabels" type="checkbox"> Mostrar todas las etiquetas</label>
+          
+          <button id="dimUnassigned" class="secondary toggle-button" type="button" aria-pressed="false" disabled>Sin asignar: vista contextual (hidden line)</button>
+          <button id="reset" class="secondary" disabled>Restaurar consulta</button>
+          
+          <div id="legend" class="legend"></div>
+        </div>
+      </section>
+
+      <section id="quality" class="pane">
+        <div class="card grid">
+          <h2>Calidad de datos</h2>
+          <div class="parameter-picker">
+            <input id="qaPropertyFilter" class="parameter-filter" type="search" placeholder="Escribir para buscar parámetro…" autocomplete="off">
+            <select id="qaProperty">
+              <option value="">Seleccionar parámetro…</option>
+            </select>
+          </div>
+          <select id="qaRule">
+            <option value="summary">Distribución</option>
+            <option value="empty">Vacíos</option>
+            <option value="duplicates">Duplicados</option>
+            <option value="numeric">Estadística numérica</option>
+          </select>
+          <button id="qaRun" class="primary" disabled>Analizar auditoría</button>
+          <button id="qaExport" class="secondary" disabled>Exportar CSV</button>
+          
+          <div id="qaSummary" class="hint"></div>
+          <div id="qaKpis" class="kpis"></div>
+          
+          <div id="qaResults" class="results virtual-scroller">
+            <div class="vs-content"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="props" class="pane properties-pane">
+        <div class="card properties-card">
+          <h2>Propiedades del elemento</h2>
+          <div id="properties" class="properties hint">Selecciona un elemento.</div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="app-footer">
+      <span>Desarrollado por Ing. Juan Manuel Vizcarra Aparicio</span>
+      <a href="https://www.linkedin.com/in/juanvizcarra/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    </footer>
+  </aside>
+
+  <main class="viewer-wrap">
+    <div id="viewer" class="viewer"></div>
+    <div id="segmentLabels" class="segment-label-layer" aria-hidden="true"></div>
+    <div id="loading" class="overlay hidden">Inicializando visor…</div>
+  </main>
+
+  <section id="filesPanel" class="files-panel hidden" aria-label="Modelos federados">
+    <div id="filesPanelHandle" class="floating-head">
+      <h2>Modelos federados</h2>
+      <div class="floating-actions">
+        <button id="minimizeFiles" class="icon-btn" aria-label="Minimizar">−</button>
+        <button id="closeFiles" class="icon-btn" aria-label="Cerrar">×</button>
+      </div>
+    </div>
+    <div id="filesPanelBody">
+      <div class="files-help">◎ Referencia automática · ● Coordenadas compartidas · ⚠ Sin referencia compartida válida</div>
+      <div class="files-toolbar">
+        <button id="sortFilesBtn" class="secondary">Ordenar A-Z</button>
+        <button id="showAllModelsBtn" class="secondary">Mostrar Todo</button>
+        <button id="hideAllModelsBtn" class="secondary">Ocultar Todo</button>
+      </div>
+      <div id="filesList" class="files-list"></div>
+    </div>
+  </section>
+</div>
+<script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.min.js"></script>
+<script type="module" src="/js/main.js"></script>
+</body>
+</html>

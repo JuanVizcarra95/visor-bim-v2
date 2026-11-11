@@ -1,0 +1,5 @@
+node_modules/
+.env
+# Ignoramos la carpeta de modelos físicos para no subir GBs de RVTs a GitHub
+models/
+# NO ignoramos .data porque queremos que la nube lea el models.json que generaste localmente
