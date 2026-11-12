@@ -63,11 +63,9 @@ function downloadAec(document) {
 function sharedInfo(node) {
   const matrix = node.getAecModelData?.()?.refPointTransformation;
   if (!matrix || matrix.length < 12 || ![...matrix].every(Number.isFinite)) return null;
-  
   const determinant = matrix[0] * (matrix[4] * matrix[8] - matrix[5] * matrix[7]) 
                     - matrix[3] * (matrix[1] * matrix[8] - matrix[2] * matrix[7]) 
                     + matrix[6] * (matrix[1] * matrix[5] - matrix[2] * matrix[4]);
-                    
   return Math.abs(determinant) < 1e-10 ? null : { ref: new THREE.Vector3(matrix[9], matrix[10], matrix[11]) };
 }
 
@@ -88,17 +86,12 @@ async function init() {
     viewer = new Autodesk.Viewing.GuiViewer3D($('viewer'), { extensions: [] });
     if (viewer.start()) throw Error('No se pudo iniciar WebGL');
     
-    // Mejoras de renderización
     viewer.setQualityLevel(false, true); 
     viewer.prefs.set('edgeRendering', true); 
     viewer.prefs.set('envMapBackground', true); 
     viewer.setTheme('light-theme');
     viewer.setProgressiveRendering?.(true);
-    
-    if (viewer.impl && viewer.impl.setAOEnabled) {
-      viewer.impl.setAOEnabled(true);
-    }
-    
+    if (viewer.impl && viewer.impl.setAOEnabled) viewer.impl.setAOEnabled(true);
     viewer.setGroundShadow?.(false);
     viewer.setGroundReflection?.(false);
     
@@ -148,28 +141,14 @@ async function loadFederation() {
   
   for (let index = 0; index < prepared.length; index++) {
     const item = prepared[index];
-    const options = { 
-      keepCurrentModels: index > 0, 
-      preserveView: index > 0, 
-      applyRefPoint: !!item.shared, 
-      globalOffset 
-    };
-    
+    const options = { keepCurrentModels: index > 0, preserveView: index > 0, applyRefPoint: !!item.shared, globalOffset };
     const model = await viewer.loadDocumentNode(item.document, item.node, options);
     const coordinateDelta = item.shared ? item.shared.ref.distanceTo(globalOffset) : null;
     
     models.push({
-      key: String(model.id),
-      model,
-      name: item.info.name,
-      visible: true,
-      leaves: null,
-      hasSharedCoordinates: !!item.shared,
-      referencePoint: item.shared ? item.shared.ref.clone() : null,
-      coordinateDelta,
-      referenceModel: item === reference
+      key: String(model.id), model, name: item.info.name, visible: true, leaves: null,
+      hasSharedCoordinates: !!item.shared, referencePoint: item.shared ? item.shared.ref.clone() : null, coordinateDelta, referenceModel: item === reference
     });
-    
     if (!item.shared) withoutCoordinates++;
     await frame();
   }
@@ -188,21 +167,22 @@ async function leavesOf(entry) {
   if (entry.leaves) return entry.leaves;
   const tree = await treeOf(entry.model);
   const ids = [];
-  tree.enumNodeChildren(tree.getRootId(), id => {
-    if (!tree.getChildCount(id)) ids.push(id);
-  }, true);
+  tree.enumNodeChildren(tree.getRootId(), id => { if (!tree.getChildCount(id)) ids.push(id); }, true);
   return entry.leaves = ids;
 }
 
-function groupedOptions(firstValue, label, filter = '') {
-  const query = filter.trim().toLocaleLowerCase('es');
+// Generación de filtros nativos usando optgroup
+function refreshSelect(selectId, filterId, firstValue, label) {
+  const select = $(selectId);
+  const previous = select.value;
+  const filterVal = $(filterId)?.value.trim().toLocaleLowerCase('es') || '';
   let html = `<option value="${firstValue}">${label}</option>`;
   
   const sortedCatalog = [...parameterCatalog].sort(([a], [b]) => a.localeCompare(b, 'es'));
   
   for (const [category, names] of sortedCatalog) {
     const filtered = [...names]
-      .filter(name => !query || name.toLocaleLowerCase('es').includes(query) || category.toLocaleLowerCase('es').includes(query))
+      .filter(name => !filterVal || name.toLocaleLowerCase('es').includes(filterVal) || category.toLocaleLowerCase('es').includes(filterVal))
       .sort((a, b) => a.localeCompare(b, 'es'));
       
     if (filtered.length) {
@@ -211,16 +191,8 @@ function groupedOptions(firstValue, label, filter = '') {
       html += `</optgroup>`;
     }
   }
-  return html;
-}
-
-function refreshSelect(selectId, filterId, firstValue, label) {
-  const select = $(selectId);
-  const previous = select.value;
-  select.innerHTML = groupedOptions(firstValue, label, $(filterId)?.value || '');
-  if ([...select.options].some(option => option.value === previous)) {
-    select.value = previous;
-  }
+  select.innerHTML = html;
+  if ([...select.options].some(option => option.value === previous)) select.value = previous;
 }
 
 function setupParameterFilters() {
@@ -229,7 +201,6 @@ function setupParameterFilters() {
     ['property', 'propertyFilter', '', 'Segmentar por parámetro…'],
     ['qaProperty', 'qaPropertyFilter', '', 'Seleccionar parámetro…']
   ];
-  
   filters.forEach(([select, filter, value, label]) => {
     if ($(filter)) $(filter).oninput = () => refreshSelect(select, filter, value, label);
   });
@@ -260,43 +231,53 @@ async function indexParameters() {
   refreshSelect('qaProperty', 'qaPropertyFilter', '', 'Seleccionar parámetro…');
 }
 
-async function collect(property, run, scope = null) {
-  const items = [];
-  for (const entry of models) {
-    const ids = scope 
-      ? scope.filter(item => item.modelKey === entry.key).map(item => item.dbId) 
-      : await leavesOf(entry);
-      
-    for (let start = 0; start < ids.length; start += BATCH) {
-      if (run !== taskId) throw Error('cancel');
-      const rows = await bulk(entry.model, ids.slice(start, start + BATCH), property && property !== '*' ? { propFilter: [property] } : {});
-      rows.forEach(row => items.push({
-        modelKey: entry.key,
-        modelName: entry.name,
-        dbId: row.dbId,
-        name: row.name || `Elemento ${row.dbId}`,
-        properties: row.properties || []
-      }));
-      setStatus(`Leyendo ${items.length.toLocaleString('es-PE')} elementos…`);
-      await frame();
-    }
-  }
-  return items;
+function parseBooleanData(v) {
+  if (typeof v === 'boolean') return v ? 'Sí' : 'No';
+  const norm = String(v).toLowerCase().trim();
+  if (norm === 'true' || norm === 'yes') return 'Sí';
+  if (norm === 'false' || norm === 'no') return 'No';
+  return v;
 }
 
-async function runWorker(action, payload, button = null, busy = 'Procesando…') {
+// Arquitectura STREAMING: Resuelve el colapso en móviles enviando lotes al worker.
+async function runWorkerStream(action, payload, button = null, busy = 'Procesando…') {
   const run = ++taskId;
   const old = button?.textContent || '';
-  if (button) {
-    button.disabled = true;
-    button.textContent = busy;
-  }
+  if (button) { button.disabled = true; button.textContent = busy; }
   controls(false);
+  
   try {
+    worker.postMessage({ action: 'initStream', streamAction: action, payload });
     const scope = action === 'segmentation' && searchFilterEnabled ? activeSearchFilter : null;
-    const items = await collect(payload.propName || payload.prop || '*', run, scope);
-    if (run !== taskId) throw Error('cancel');
-    worker.postMessage({ action, payload: { ...payload, items } });
+    let totalItems = 0;
+
+    for (const entry of models) {
+      const ids = scope ? scope.filter(item => item.modelKey === entry.key).map(item => item.dbId) : await leavesOf(entry);
+      const prop = payload.propName || payload.prop || '*';
+        
+      for (let start = 0; start < ids.length; start += BATCH) {
+        if (run !== taskId) throw Error('cancel');
+        const rows = await bulk(entry.model, ids.slice(start, start + BATCH), prop && prop !== '*' ? { propFilter: [prop] } : {});
+        
+        const chunk = rows.map(row => {
+          let val = null;
+          let text = "";
+          if (prop === '*') {
+              text = (row.name || "") + " " + (row.properties || []).map(p => parseBooleanData(p.displayValue)).join(" ");
+          } else {
+              const p = (row.properties || []).find(x => x.displayName === prop);
+              val = p ? parseBooleanData(p.displayValue) : null;
+          }
+          return { modelKey: entry.key, modelName: entry.name, dbId: row.dbId, name: row.name || `Elemento ${row.dbId}`, v: val, t: text };
+        });
+
+        worker.postMessage({ action: 'chunkStream', items: chunk });
+        totalItems += chunk.length;
+        setStatus(`Analizando ${totalItems.toLocaleString('es-PE')} elementos…`);
+        await frame();
+      }
+    }
+    worker.postMessage({ action: 'endStream' });
   } catch (error) {
     controls(true);
     if (button) button.textContent = old;
@@ -372,7 +353,6 @@ function updateFilterToggle() {
   const toggle = $('filterViewToggle');
   const label = $('filterViewLabel');
   if (!control) return;
-  
   control.hidden = !searchFilterEnabled;
   toggle.checked = outsideFilterMode === 'hide';
   label.textContent = outsideFilterMode === 'context' ? 'No filtrados: transparencia + hidden line' : 'No filtrados: ocultos';
@@ -381,15 +361,8 @@ function updateFilterToggle() {
 function interpolateColor(value, min, max) {
   const t = max === min ? 0.5 : Math.max(0, Math.min(1, (value - min) / (max - min)));
   let a, b, u;
-  if (t <= 0.5) {
-    a = [255, 0, 0];
-    b = [255, 255, 0];
-    u = t * 2;
-  } else {
-    a = [255, 255, 0];
-    b = [0, 80, 255];
-    u = (t - 0.5) * 2;
-  }
+  if (t <= 0.5) { a = [255, 0, 0]; b = [255, 255, 0]; u = t * 2; } 
+  else { a = [255, 255, 0]; b = [0, 80, 255]; u = (t - 0.5) * 2; }
   return a.map((x, index) => Math.round(x + (b[index] - x) * u));
 }
 
@@ -415,10 +388,7 @@ function groupWorldCenter(elements) {
     tree.enumNodeFragments(element.dbId, fragId => {
       box.makeEmpty();
       fragments.getWorldBounds(fragId, box);
-      if (!box.isEmpty()) {
-        total.union(box);
-        valid = true;
-      }
+      if (!box.isEmpty()) { total.union(box); valid = true; }
     }, true);
   }
   return valid ? total.getCenter(new THREE.Vector3()) : null;
@@ -437,10 +407,7 @@ function updateSegmentLabelPositions() {
     const visible = point && Number.isFinite(point.x) && Number.isFinite(point.y) && point.x >= 5 && point.y >= 5 && point.x <= width - 5 && point.y <= height - 5;
     
     item.element.hidden = !visible;
-    if (visible) {
-      item.element.style.left = `${point.x}px`;
-      item.element.style.top = `${point.y}px`;
-    }
+    if (visible) { item.element.style.left = `${point.x}px`; item.element.style.top = `${point.y}px`; }
   }
 }
 
@@ -462,10 +429,7 @@ async function renderSegmentLabels(groups) {
     label.style.setProperty('--label-color', group.hex || '#248bd6');
     label.textContent = value;
     label.title = `${value} · ${group.elements.length} elemento(s). Clic para seleccionar y acercar.`;
-    label.onclick = event => {
-      event.stopPropagation();
-      selectLegendGroup(value, group.elements);
-    };
+    label.onclick = event => { event.stopPropagation(); selectLegendGroup(value, group.elements); };
     
     layer.appendChild(label);
     segmentLabelEntries.push({ element: label, world, value, color: group.hex || '#248bd6' });
@@ -492,10 +456,8 @@ async function theme(groups, mode) {
     const [value, group] = groups[index];
     let rgb, hex;
     
-    if (value === 'Sin asignar') {
-      rgb = [119, 119, 119];
-      hex = '#777777';
-    } else if (mode === 'continuous' && Number.isFinite(group.n)) {
+    if (value === 'Sin asignar') { rgb = [119, 119, 119]; hex = '#777777'; } 
+    else if (mode === 'continuous' && Number.isFinite(group.n)) {
       rgb = interpolateColor(group.n, min, max);
       hex = '#' + rgb.map(x => x.toString(16).padStart(2, '0')).join('');
     } else {
@@ -521,12 +483,7 @@ async function theme(groups, mode) {
     
     const selectGroup = () => selectLegendGroup(value, group.elements);
     row.onclick = selectGroup;
-    row.onkeydown = event => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        selectGroup();
-      }
-    };
+    row.onkeydown = event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectGroup(); } };
     $('legend').appendChild(row);
   }
   
@@ -568,6 +525,33 @@ function selectItem(item) {
   viewer.fitToView([item.dbId], entry.model);
 }
 
+function setupVirtualScroll(containerId, data, renderFn, rowHeight = 35) {
+  const container = $(containerId);
+  const content = container.querySelector('.vs-content');
+  container.onscroll = null;
+  content.innerHTML = '';
+  
+  if (!data || !data.length) { content.style.height = '0px'; return; }
+  content.style.height = `${data.length * rowHeight}px`;
+  
+  const renderChunk = () => {
+    const start = Math.max(0, Math.floor(container.scrollTop / rowHeight) - 5);
+    const end = Math.min(data.length, Math.ceil((container.scrollTop + container.clientHeight) / rowHeight) + 5);
+    content.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+    for (let i = start; i < end; i++) {
+      const el = renderFn(data[i]);
+      el.style.position = 'absolute';
+      el.style.top = `${i * rowHeight}px`;
+      el.style.width = '100%';
+      fragment.appendChild(el);
+    }
+    content.appendChild(fragment);
+  };
+  container.onscroll = () => requestAnimationFrame(renderChunk);
+  renderChunk();
+}
+
 function renderQuality(data) {
   qaData = data.rows || [];
   if ($('qaKpis')) {
@@ -580,19 +564,13 @@ function renderQuality(data) {
   }
   if ($('qaSummary')) $('qaSummary').textContent = `${qaData.length.toLocaleString('es-PE')} resultados`;
   
-  const container = $('qaResults')?.querySelector('.vs-content') || $('qaResults');
-  if (container) {
-    container.textContent = '';
-    qaData.slice(0, 2000).forEach(item => {
-      const row = document.createElement('div');
-      row.className = 'item';
-      row.textContent = item.isGroup 
-        ? `${item.value} · ${item.count}` 
-        : `${item.name || 'Elemento'} · ${item.value || 'Vacío'}${item.count ? ` · ${item.count} repeticiones` : ''}`;
-      if (!item.isGroup) row.onclick = () => selectItem(item);
-      container.appendChild(row);
-    });
-  }
+  setupVirtualScroll('qaResults', qaData, (item) => {
+    const row = document.createElement('div');
+    row.className = 'item';
+    row.textContent = item.isGroup ? `${item.value} · ${item.count}` : `${item.name || 'Elemento'} · ${item.value || 'Vacío'}${item.count ? ` · ${item.count} repeticiones` : ''}`;
+    if (!item.isGroup) row.onclick = () => selectItem(item);
+    return row;
+  });
   
   if ($('qaExport')) $('qaExport').disabled = !qaData.length;
   setStatus('Auditoría completada');
@@ -620,11 +598,7 @@ worker.onmessage = async ({ data }) => {
     if (mode === 'auto') mode = numericRatio >= 0.8 ? 'continuous' : 'categorical';
     if (mode === 'continuous' && numericRatio < 0.8) mode = 'categorical';
     
-    valid.sort(mode === 'continuous' 
-      ? (a, b) => a[1].n - b[1].n 
-      : (a, b) => a[0].localeCompare(b[0], 'es', { numeric: true })
-    );
-    
+    valid.sort(mode === 'continuous' ? (a, b) => a[1].n - b[1].n : (a, b) => a[0].localeCompare(b[0], 'es', { numeric: true }));
     const empty = data.groups.find(([value]) => value === 'Sin asignar');
     if (empty) valid.push(empty);
     
@@ -638,18 +612,26 @@ worker.onmessage = async ({ data }) => {
 
 $('searchBtn').onclick = () => {
   const query = $('query').value.trim();
-  if (!query) return;
+  const op = $('operator').value;
+  if (!query && !['empty', 'notEmpty'].includes(op)) return;
   activeSearchFilter = [];
   searchFilterEnabled = false;
   segmentationCache.clear();
-  runWorker('search', { prop: $('searchProperty').value, q: query, op: $('operator').value }, $('searchBtn'), 'Buscando…');
+  if($('results')) $('results').classList.remove('hidden');
+  runWorkerStream('search', { prop: $('searchProperty').value || '*', q: query, op }, $('searchBtn'), 'Buscando…');
 };
 
 $('query').onkeydown = event => { if (event.key === 'Enter') $('searchBtn').click(); };
 
+$('operator').onchange = (e) => {
+    const isLogicOp = ['empty', 'notEmpty'].includes(e.target.value);
+    $('query').disabled = isLogicOp;
+    if (isLogicOp) $('query').value = '';
+};
+
 $('property').onchange = () => {
   const propName = $('property').value;
-  if (!propName) return resetSegmentation();
+  if (!propName || propName === '*') return resetSegmentation();
   if (searchFilterEnabled && !activeSearchFilter.length) return setStatus('El filtro activo no tiene resultados');
   
   const signature = searchFilterEnabled ? activeSearchFilter.map(x => `${x.modelKey}:${x.dbId}`).join('|') : 'all';
@@ -657,7 +639,7 @@ $('property').onchange = () => {
   const cached = segmentationCache.get(cacheKey);
   
   if (cached) return worker.onmessage({ data: cached });
-  runWorker('segmentation', { propName, cacheKey });
+  runWorkerStream('segmentation', { propName, cacheKey });
 };
 
 if ($('colorMode')) $('colorMode').onchange = () => { $('property').value && $('property').onchange(); };
@@ -665,7 +647,7 @@ if ($('palette')) $('palette').onchange = () => { $('property').value && $('prop
 
 if ($('qaRun')) $('qaRun').onclick = () => {
   const propName = $('qaProperty').value;
-  if (propName) runWorker('qualityAudit', { propName, rule: $('qaRule').value }, $('qaRun'), 'Analizando…');
+  if (propName && propName !== '*') runWorkerStream('qualityAudit', { propName, rule: $('qaRule').value }, $('qaRun'), 'Analizando…');
 };
 
 if ($('qaExport')) $('qaExport').onclick = () => {
@@ -703,7 +685,7 @@ async function onSelection(event) {
           ${properties.map(property => 
             `<div class="prow">
               <span class="pname">${esc(property.displayName)}</span>
-              <span class="pval">${esc(property.displayValue)}${property.units ? ' ' + esc(property.units) : ''}</span>
+              <span class="pval">${esc(parseBooleanData(property.displayValue))}${property.units ? ' ' + esc(property.units) : ''}</span>
             </div>`
           ).join('')}
         </section>`
@@ -733,8 +715,8 @@ function resetQuality() {
   if ($('qaRule')) $('qaRule').value = 'summary';
   if ($('qaSummary')) $('qaSummary').textContent = '';
   if ($('qaKpis')) $('qaKpis').textContent = '';
-  const container = $('qaResults')?.querySelector('.vs-content') || $('qaResults');
-  if (container) container.textContent = '';
+  const container = $('qaResults');
+  if (container) { const content = container.querySelector('.vs-content'); if(content) content.innerHTML = ''; }
   if ($('qaExport')) $('qaExport').disabled = true;
 }
 
@@ -744,11 +726,13 @@ function resetAll() {
   searchFilterEnabled = false;
   outsideFilterMode = 'context';
   segmentationCache.clear();
-  if ($('query')) $('query').value = '';
-  if ($('searchPropertyFilter')) $('searchPropertyFilter').value = '';
+  
+  if ($('query')) { $('query').value = ''; $('query').disabled = false; }
   if ($('searchProperty')) $('searchProperty').value = '*';
+  if ($('searchPropertyFilter')) $('searchPropertyFilter').value = '';
   if ($('operator')) $('operator').value = 'contains';
   if ($('searchSummary')) $('searchSummary').textContent = '';
+  if ($('results')) $('results').classList.add('hidden');
   
   updateFilterToggle();
   resetSegmentation();
@@ -773,13 +757,8 @@ $('reset').onclick = resetAll;
 
 if ($('isolate')) {
   $('isolate').onchange = () => {
-    if ($('isolate').checked && searchFilterEnabled) {
-      applyFilterVisibility(activeSearchFilter);
-    } else {
-      clearIsolationOnly();
-      viewer.setGhosting?.(true);
-      viewer.impl.invalidate(true, true, true);
-    }
+    if ($('isolate').checked && searchFilterEnabled) applyFilterVisibility(activeSearchFilter);
+    else { clearIsolationOnly(); viewer.setGhosting?.(true); viewer.impl.invalidate(true, true, true); }
   };
 }
 
@@ -814,10 +793,7 @@ async function captureHighResolution() {
     const width = CAPTURE_MAX_WIDTH;
     const height = Math.max(2160, Math.round(width * ratio));
     
-    const result = await new Promise((resolve, reject) => {
-      try { viewer.getScreenShot(width, height, resolve); } catch (error) { reject(error); }
-    });
-    
+    const result = await new Promise((resolve, reject) => { try { viewer.getScreenShot(width, height, resolve); } catch (error) { reject(error); } });
     const source = result instanceof Blob ? URL.createObjectURL(result) : result;
     const image = await loadCaptureImage(source);
     
@@ -848,10 +824,8 @@ async function captureHighResolution() {
         
         context.fillStyle = 'rgba(18,21,25,.86)';
         context.fillRect(x - textWidth / 2 - pad, y - boxHeight / 2, textWidth + pad * 2, boxHeight);
-        
         context.fillStyle = item.color;
         context.fillRect(x - textWidth / 2 - pad, y - boxHeight / 2, 3 * scaleX, boxHeight);
-        
         context.fillStyle = '#fff';
         context.fillText(text, x, y);
       }
@@ -889,11 +863,7 @@ function setRefreshProgress(update) {
     refreshStartedByThisPage = false;
     setTimeout(() => loadFederation().catch(error => setStatus(`Actualización terminada, pero no se pudo recargar: ${error.message}`)), 800);
   }
-  
-  if (update.state === "error") {
-    reloadAfterRefresh = false;
-    refreshStartedByThisPage = false;
-  }
+  if (update.state === "error") { reloadAfterRefresh = false; refreshStartedByThisPage = false; }
 }
 
 async function startModelRefresh() {
@@ -901,22 +871,16 @@ async function startModelRefresh() {
   if (!button) return;
   const key = window.prompt("Clave de actualización de modelos:");
   if (key === null) return;
-  
   button.disabled = true;
   button.textContent = "Iniciando…";
   
   try {
-    const response = await fetch("/api/refresh", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Refresh-Key": key }
-    });
-    
+    const response = await fetch("/api/refresh", { method: "POST", headers: { "Content-Type": "application/json", "X-Refresh-Key": key } });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
-    
     refreshStartedByThisPage = true;
     reloadAfterRefresh = true;
-    setStatus("Actualización incremental iniciada. Solo se traducirán archivos nuevos o modificados.");
+    setStatus("Actualización incremental iniciada.");
   } catch (error) {
     setStatus(`No se pudo iniciar la actualización: ${error.message}`);
     button.disabled = false;
@@ -926,13 +890,8 @@ async function startModelRefresh() {
 
 function connectRefreshEvents() {
   const source = new EventSource("/api/events");
-  source.onmessage = event => {
-    try { setRefreshProgress(JSON.parse(event.data)); } 
-    catch (error) { console.warn("Evento SSE inválido", error); }
-  };
-  source.onerror = () => {
-    if (refreshStartedByThisPage) setStatus("Reconectando con el progreso de actualización…");
-  };
+  source.onmessage = event => { try { setRefreshProgress(JSON.parse(event.data)); } catch (error) {} };
+  source.onerror = () => { if (refreshStartedByThisPage) setStatus("Reconectando con el progreso de actualización…"); };
   window.addEventListener("beforeunload", () => source.close(), { once: true });
 }
 
@@ -941,9 +900,7 @@ function renderFiles() {
   $('filesList').textContent = '';
   
   const sortedModels = [...models].sort((a, b) => {
-    return sortDirection === 'asc' 
-      ? a.name.localeCompare(b.name, 'es', { numeric: true })
-      : b.name.localeCompare(a.name, 'es', { numeric: true });
+    return sortDirection === 'asc' ? a.name.localeCompare(b.name, 'es', { numeric: true }) : b.name.localeCompare(a.name, 'es', { numeric: true });
   });
 
   sortedModels.forEach(entry => {
@@ -954,72 +911,22 @@ function renderFiles() {
     
     row.innerHTML = `
       <span title="${title}">${marker}</span>
-      <label class="file-label">
-        <input type="checkbox" class="model-toggle" ${entry.visible ? 'checked' : ''}>
-        <span class="file-name" title="${esc(entry.name)}">${esc(entry.name)}</span>
-      </label>
-      <span class="file-actions">
-        <button class="focus-btn">Enfocar</button>
-      </span>
+      <label class="file-label"><input type="checkbox" class="model-toggle" ${entry.visible ? 'checked' : ''}><span class="file-name" title="${esc(entry.name)}">${esc(entry.name)}</span></label>
+      <span class="file-actions"><button class="focus-btn">Enfocar</button></span>
     `;
-
     const checkbox = row.querySelector('.model-toggle');
     const focusBtn = row.querySelector('.focus-btn');
-
-    checkbox.onchange = (e) => {
-      entry.visible = e.target.checked;
-      if (entry.visible) viewer.showModel(entry.model);
-      else viewer.hideModel(entry.model);
-    };
-
+    checkbox.onchange = (e) => { entry.visible = e.target.checked; if (entry.visible) viewer.showModel(entry.model); else viewer.hideModel(entry.model); };
     focusBtn.onclick = () => viewer.fitToView(undefined, entry.model);
     $('filesList').appendChild(row);
   });
 }
 
-if ($('filesBtn')) $('filesBtn').onclick = () => {
-  if ($('filesPanel')) $('filesPanel').classList.remove('hidden');
-  else $('filesDialog')?.showModal();
-};
-
-if ($('closeFiles')) $('closeFiles').onclick = () => {
-  if ($('filesPanel')) $('filesPanel').classList.add('hidden');
-  else $('filesDialog')?.close();
-};
-
-if ($('sortFilesBtn')) $('sortFilesBtn').onclick = () => {
-  sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-  $('sortFilesBtn').textContent = sortDirection === 'asc' ? 'Ordenar A-Z' : 'Ordenar Z-A';
-  renderFiles();
-};
-
-if ($('showAllModelsBtn')) $('showAllModelsBtn').onclick = () => {
-  models.forEach(entry => {
-    entry.visible = true;
-    viewer.showModel(entry.model);
-  });
-  renderFiles();
-};
-
-if ($('hideAllModelsBtn')) $('hideAllModelsBtn').onclick = () => {
-  models.forEach(entry => {
-    entry.visible = false;
-    viewer.hideModel(entry.model);
-  });
-  renderFiles();
-};
-
-function setupSearchOperators() {
-  const operator = $('operator');
-  if (!operator) return;
-  operator.innerHTML = `
-    <option value="equals">Igual a</option>
-    <option value="startsWith">Empieza por</option>
-    <option value="contains">Contiene</option>
-    <option value="gt">Mayor que</option>
-    <option value="lt">Menor que</option>`;
-  operator.value = 'contains';
-}
+if ($('filesBtn')) $('filesBtn').onclick = () => { if ($('filesPanel')) $('filesPanel').classList.remove('hidden'); else $('filesDialog')?.showModal(); };
+if ($('closeFiles')) $('closeFiles').onclick = () => { if ($('filesPanel')) $('filesPanel').classList.add('hidden'); else $('filesDialog')?.close(); };
+if ($('sortFilesBtn')) $('sortFilesBtn').onclick = () => { sortDirection = sortDirection === 'asc' ? 'desc' : 'asc'; $('sortFilesBtn').textContent = sortDirection === 'asc' ? 'Ordenar A-Z' : 'Ordenar Z-A'; renderFiles(); };
+if ($('showAllModelsBtn')) $('showAllModelsBtn').onclick = () => { models.forEach(entry => { entry.visible = true; viewer.showModel(entry.model); }); renderFiles(); };
+if ($('hideAllModelsBtn')) $('hideAllModelsBtn').onclick = () => { models.forEach(entry => { entry.visible = false; viewer.hideModel(entry.model); }); renderFiles(); };
 
 function setupTabs() {
   const tabs = [...document.querySelectorAll('.tab')];
@@ -1029,27 +936,26 @@ function setupTabs() {
     tab.onclick = () => {
       tabs.forEach(item => item.classList.toggle('active', item === tab));
       panes.forEach(pane => pane.classList.toggle('active', pane.id === tab.dataset.pane));
-      if (tab.dataset.pane === 'props' && $('properties') && !$('properties').textContent.trim()) {
-        $('properties').innerHTML = '<div class="hint">Selecciona un elemento.</div>';
-      }
+      if (tab.dataset.pane === 'props' && $('properties') && !$('properties').textContent.trim()) $('properties').innerHTML = '<div class="hint">Selecciona un elemento.</div>';
     };
   }
 }
 
-if ($('showSegmentLabels')) {
-  $('showSegmentLabels').onchange = async event => {
-    segmentLabelsEnabled = event.currentTarget.checked;
-    if (segmentLabelsEnabled && lastThemeGroups) await renderSegmentLabels(lastThemeGroups);
-    else clearSegmentLabels();
-  };
-}
+if ($('showSegmentLabels')) $('showSegmentLabels').onchange = async event => {
+  segmentLabelsEnabled = event.currentTarget.checked;
+  if (segmentLabelsEnabled && lastThemeGroups) await renderSegmentLabels(lastThemeGroups);
+  else clearSegmentLabels();
+};
+
+// Activar Sidebar para Móviles
+if ($('menuBtn')) $('menuBtn').onclick = () => { $('sidebar').classList.add('open'); $('scrim').classList.add('open'); };
+if ($('scrim')) $('scrim').onclick = () => { $('sidebar').classList.remove('open'); $('scrim').classList.remove('open'); };
 
 if ($('captureBtn')) $('captureBtn').onclick = captureHighResolution;
 if ($("refreshBtn")) $("refreshBtn").onclick = startModelRefresh;
 
 connectRefreshEvents();
-setupSearchOperators();
 setupTabs();
-setupParameterFilters();
 ensureFilterToggle();
+setupParameterFilters();
 init();

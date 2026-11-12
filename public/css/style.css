@@ -66,7 +66,7 @@ html, body, #app {
 .actions, .tabs {
   display: grid;
   gap: 6px;
-  margin: 10px 0;
+  margin: 8px 0;
 }
 
 .actions {
@@ -79,12 +79,13 @@ html, body, #app {
 
 button, input, select {
   width: 100%;
-  min-height: 38px;
-  padding: 8px;
+  min-height: 25px; /* Reducido desde 38px */
+  padding: 4px 8px; /* Padding vertical ajustado */
   border: 1px solid var(--line);
-  border-radius: 5px;
+  border-radius: 3px;
   background: #191b20;
   color: var(--text);
+  font-size: 11.5px; /* Texto ligeramente más compacto */
 }
 
 button {
@@ -145,21 +146,21 @@ button:disabled {
 }
 
 .card {
-  padding: 12px;
-  margin-bottom: 10px;
+  padding: 10px; /* Reducido de 12px */
+  margin-bottom: 8px;
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 8px;
 }
 
 .card h2 {
-  margin: 0 0 9px;
+  margin: 0 0 6px; /* Ajuste desde 9px */
   font-size: 14px;
 }
 
 .grid {
   display: grid;
-  gap: 8px;
+  gap: 6px; /* Gaps acortados entre inputs */
 }
 
 .two {
@@ -169,13 +170,15 @@ button:disabled {
 }
 
 .results {
-  height: 160px;
+  max-height: 140px; /* Cambiado a flexible en vez de fijo */
   overflow-y: auto;
   position: relative;
 }
 
 .virtual-scroller .vs-content {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
 }
 
@@ -318,6 +321,10 @@ button:disabled {
   display: none !important;
 }
 
+.results.hidden {
+  display: none;
+}
+
 .hint {
   color: var(--muted);
   font-size: 12px;
@@ -338,7 +345,7 @@ hr {
   border: 0;
   border-top: 1px solid var(--line);
   width: 100%;
-  margin: 10px 0;
+  margin: 8px 0; /* Márgenes del divisor reducidos */
 }
 
 .app-footer {
@@ -424,12 +431,27 @@ dialog::backdrop {
 /* -------------------------------------- */
 /* Nuevos estilos del Panel de Archivos   */
 /* -------------------------------------- */
+.files-panel {
+  position: fixed;
+  top: 96px;
+  right: 24px;
+  z-index: 120;
+  width: min(420px, calc(100vw - 48px)); 
+  max-height: 70vh;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--text);
+  background: var(--panel);
+  box-shadow: 0 16px 42px #0009;
+  overflow: hidden;
+}
+
 .file-row {
   display: grid;
   grid-template-columns: auto 1fr auto;
-  gap: 9px;
+  gap: 6px;
   align-items: center;
-  padding: 9px;
+  padding: 5px 8px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -452,7 +474,7 @@ dialog::backdrop {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .file-actions {
@@ -462,8 +484,9 @@ dialog::backdrop {
 
 .file-actions button {
   width: auto;
-  min-height: 32px;
-  padding: 5px 8px;
+  min-height: 24px;
+  padding: 2px 6px;
+  font-size: 11px;
 }
 
 .files-toolbar {
@@ -486,38 +509,8 @@ dialog::backdrop {
 }
 /* -------------------------------------- */
 
-.parameter-picker {
-  display: grid;
-  gap: 5px;
-}
-
-.parameter-filter {
-  min-height: 34px;
-  background: #13151a;
-  border-color: #343a43;
-}
-
-.parameter-filter::-webkit-search-cancel-button {
-  cursor: pointer;
-}
-
 .toggle-button[aria-pressed="true"] {
   background: #59616c;
-}
-
-.files-panel {
-  position: fixed;
-  top: 96px;
-  right: 24px;
-  z-index: 120;
-  width: min(560px, calc(100vw - 48px));
-  max-height: 70vh;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  color: var(--text);
-  background: var(--panel);
-  box-shadow: 0 16px 42px #0009;
-  overflow: hidden;
 }
 
 .floating-head {
@@ -683,7 +676,14 @@ dialog::backdrop {
   }
   .menu-btn {
     display: block;
+    position: fixed;
+    z-index: 80;
+    top: 10px;
+    left: 10px;
+    width: 42px;
+    background: var(--panel);
   }
+  
   .sidebar {
     position: fixed;
     inset: 0 auto 0 0;
@@ -691,20 +691,30 @@ dialog::backdrop {
     transform: translateX(-102%);
     transition: transform 0.2s ease;
     box-shadow: 8px 0 24px #0008;
+    z-index: 100;
   }
+  
+  /* Lógica para que el JavaScript dispare las clases visuales */
   .sidebar.open {
     transform: translateX(0);
   }
+  
+  .scrim {
+    display: none;
+  }
+  
   .scrim.open {
     display: block;
     position: fixed;
     inset: 0;
-    z-index: 40;
-    background: #0008;
+    z-index: 90;
+    background: rgba(0, 0, 0, 0.75); /* Fondo oscuro semitransparente que cubre el visor */
   }
+  
   .brand {
-    padding-left: 44px;
+    padding-left: 44px; /* Deja espacio para no solapar el botón del menú */
   }
+  
   .files-panel {
     top: 66px;
     right: 10px;
@@ -721,4 +731,22 @@ dialog::backdrop {
   .sidebar {
     padding: 10px;
   }
+}
+
+/* Nuevo selector compacto para los filtros */
+.parameter-picker {
+  display: grid;
+  gap: 4px; /* Unifica el espacio entre el input de búsqueda y el select visualmente */
+}
+
+.parameter-filter {
+  min-height: 28px !important; /* Más delgado para no matar el espacio */
+  background: #13151a;
+  border-color: #343a43;
+  padding: 4px 8px;
+  font-size: 11px; /* Letra de ayuda más pequeña */
+}
+
+.parameter-filter::-webkit-search-cancel-button {
+  cursor: pointer;
 }

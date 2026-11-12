@@ -43,10 +43,11 @@
       <section id="explore" class="pane active">
         <div class="card grid">
           <h2>Buscar y segmentar</h2>
+          
           <input id="query" placeholder="Buscar nombre o valor BIM…">
           <div class="two">
             <div class="parameter-picker">
-              <input id="searchPropertyFilter" class="parameter-filter" type="search" placeholder="Escribir para buscar parámetro…" autocomplete="off">
+              <input id="searchPropertyFilter" class="parameter-filter" type="search" placeholder="Filtro rápido..." autocomplete="off">
               <select id="searchProperty">
                 <option value="*">Todas las propiedades</option>
               </select>
@@ -54,25 +55,24 @@
             <select id="operator">
               <option value="contains">Contiene</option>
               <option value="equals">Igual a</option>
+              <option value="startsWith">Empieza por</option>
               <option value="gt">Mayor que</option>
               <option value="lt">Menor que</option>
+              <option value="empty">Vacío (Sin valor)</option>
+              <option value="notEmpty">No vacío (Con valor)</option>
             </select>
           </div>
           <button id="searchBtn" class="primary" disabled>Buscar</button>
           
-          <div id="searchSummary" class="hint"></div>
-          <div id="results" class="results virtual-scroller">
-            <div class="vs-content"></div>
-          </div>
-          
           <hr>
           
           <div class="parameter-picker">
-            <input id="propertyFilter" class="parameter-filter" type="search" placeholder="Escribir para buscar parámetro…" autocomplete="off" disabled>
+            <input id="propertyFilter" class="parameter-filter" type="search" placeholder="Buscar parámetro a segmentar..." autocomplete="off" disabled>
             <select id="property" disabled>
-              <option>Esperando modelo…</option>
+              <option value="">Seleccionar parámetro...</option>
             </select>
           </div>
+          
           <div class="two">
             <select id="colorMode">
               <option value="auto">Color automático</option>
@@ -85,12 +85,18 @@
             </select>
           </div>
           
-          <label class="hint check"><input id="isolate" type="checkbox" checked> Aislar resultados</label>
-          <label class="hint check"><input id="showSegmentLabels" type="checkbox"> Mostrar todas las etiquetas</label>
+          <div class="two">
+            <label class="hint check"><input id="isolate" type="checkbox" checked> Aislar</label>
+            <label class="hint check"><input id="showSegmentLabels" type="checkbox"> Etiquetas</label>
+          </div>
           
           <button id="dimUnassigned" class="secondary toggle-button" type="button" aria-pressed="false" disabled>Sin asignar: vista contextual (hidden line)</button>
           <button id="reset" class="secondary" disabled>Restaurar consulta</button>
           
+          <div id="searchSummary" class="hint"></div>
+          <div id="results" class="results virtual-scroller hidden">
+            <div class="vs-content"></div>
+          </div>
           <div id="legend" class="legend"></div>
         </div>
       </section>
@@ -99,11 +105,12 @@
         <div class="card grid">
           <h2>Calidad de datos</h2>
           <div class="parameter-picker">
-            <input id="qaPropertyFilter" class="parameter-filter" type="search" placeholder="Escribir para buscar parámetro…" autocomplete="off">
+            <input id="qaPropertyFilter" class="parameter-filter" type="search" placeholder="Filtro de parámetro..." autocomplete="off">
             <select id="qaProperty">
               <option value="">Seleccionar parámetro…</option>
             </select>
           </div>
+          
           <select id="qaRule">
             <option value="summary">Distribución</option>
             <option value="empty">Vacíos</option>
