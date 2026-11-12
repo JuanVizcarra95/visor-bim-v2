@@ -1,0 +1,247 @@
+{
+  "models": [
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-AR-01001.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRmRjZWQ2ZTFjMDM4NS0yNjA4MjcxLUNJRS1DTy1aWi1NTy1BUi0wMTAwMS5ydnQ",
+      "sha256": "dced6e1c0385a5b0d8991cd963ecba1651e750191d33a878751e0208da27a81b",
+      "size": 81674240,
+      "modifiedAt": "2026-11-12T02:56:58.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-AR-01002.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjkzNmJlYWFkZGI5MC0yNjA4MjcxLUNJRS1DTy1aWi1NTy1BUi0wMTAwMi5ydnQ",
+      "sha256": "936beaaddb90bd16c5bacff6db66bfce5c6bbd4b117a2242fc942e1057b60943",
+      "size": 84578304,
+      "modifiedAt": "2026-11-12T02:55:56.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-AR-01003.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjhlYTNlN2ViOTU0Yy0yNjA4MjcxLUNJRS1DTy1aWi1NTy1BUi0wMTAwMy5ydnQ",
+      "sha256": "8ea3e7eb954cd9ffbe06963f9fd0c9b01ec169b715a9c643c8ebc991ad153a63",
+      "size": 67469312,
+      "modifiedAt": "2026-11-12T02:56:54.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-AR-01004.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRmYzYzkwN2U3NDE5MS0yNjA4MjcxLUNJRS1DTy1aWi1NTy1BUi0wMTAwNC5ydnQ",
+      "sha256": "f3c907e7419149be2000613d76cc1453b2f7ccbefc275eed3dabd1cd8a8b4f15",
+      "size": 76357632,
+      "modifiedAt": "2026-11-12T02:56:44.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-AR-01100.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjFhMTIzZTE5N2Q4NC0yNjA4MjcxLUNJRS1DTy1aWi1NTy1BUi0wMTEwMC5ydnQ",
+      "sha256": "1a123e197d84a5cad969a4ac2b27fff3c436ff6ec2d7a1311fa6d041dec633c8",
+      "size": 71188480,
+      "modifiedAt": "2026-11-12T02:56:04.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-DT-01001.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjY1NzY2NDdkYzg0OS0yNjA4MjcxLUNJRS1DTy1aWi1NTy1EVC0wMTAwMS5ydnQ",
+      "sha256": "6576647dc8490b99b49202bca99e91b10cfa15eeb7ac7f798607f31ef3da979e",
+      "size": 109608960,
+      "modifiedAt": "2026-11-12T02:56:28.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-DT-01002.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRmFhZmY5YmMwZjE4YS0yNjA4MjcxLUNJRS1DTy1aWi1NTy1EVC0wMTAwMi5ydnQ",
+      "sha256": "aaff9bc0f18a502e3c4d4316bf06576c6abac06fecf9ba5920617e970ed6e08d",
+      "size": 119627776,
+      "modifiedAt": "2026-11-12T02:56:32.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-DT-01003.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRmIzN2NiOTgzYTQ2NC0yNjA4MjcxLUNJRS1DTy1aWi1NTy1EVC0wMTAwMy5ydnQ",
+      "sha256": "b37cb983a4643145ca5fd48a04e96998fe68e9fb0a407a6b4a716d0e1b10691e",
+      "size": 101298176,
+      "modifiedAt": "2026-11-12T02:56:00.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-DT-01004.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRmIxNTk3ZjNkZDFlNC0yNjA4MjcxLUNJRS1DTy1aWi1NTy1EVC0wMTAwNC5ydnQ",
+      "sha256": "b1597f3dd1e44fdd5b344f43b5a0a17676c8555491d4f6814f3bd80a8794c28f",
+      "size": 74543104,
+      "modifiedAt": "2026-11-12T02:56:18.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-DT-01100.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjlkZTM4YjU4MzBkMy0yNjA4MjcxLUNJRS1DTy1aWi1NTy1EVC0wMTEwMC5ydnQ",
+      "sha256": "9de38b5830d3a546dfe770f889b390c23b0f9e43661cf5219a3c7fb6ebcc186c",
+      "size": 94760960,
+      "modifiedAt": "2026-11-12T02:56:20.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-EE-01001.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRmNlZWQwNGQ2MGQ0OC0yNjA4MjcxLUNJRS1DTy1aWi1NTy1FRS0wMTAwMS5ydnQ",
+      "sha256": "ceed04d60d485ed1288d0d7c1499eae771c81c2911facf32955475ab92e8b828",
+      "size": 94187520,
+      "modifiedAt": "2026-11-12T02:56:38.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-EE-01002.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRmNiYTA2NjA5OTc5MC0yNjA4MjcxLUNJRS1DTy1aWi1NTy1FRS0wMTAwMi5ydnQ",
+      "sha256": "cba066099790879d0ad03788064d5481a19f42400721a1516f37b9387c711994",
+      "size": 121647104,
+      "modifiedAt": "2026-11-12T02:56:48.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-EE-01003.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRmFiNDA1ODkyMWIyYi0yNjA4MjcxLUNJRS1DTy1aWi1NTy1FRS0wMTAwMy5ydnQ",
+      "sha256": "ab4058921b2b6ca52ecb513196cb43ddd10b6993d9b522c3a41ca0d06b01690c",
+      "size": 82780160,
+      "modifiedAt": "2026-11-12T16:58:00.245Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-EE-01004.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjQ4Yzg0NDk0YjA4Yy0yNjA4MjcxLUNJRS1DTy1aWi1NTy1FRS0wMTAwNC5ydnQ",
+      "sha256": "48c84494b08c91981b6b078cbe773d33604780734fa79c54f46e439b1cdb20c4",
+      "size": 80678912,
+      "modifiedAt": "2026-11-12T17:01:20.366Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-EE-01100.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjc4ZmJjODJhYmMwOC0yNjA4MjcxLUNJRS1DTy1aWi1NTy1FRS0wMTEwMC5ydnQ",
+      "sha256": "78fbc82abc08662a94287ccdb20eb25b1de1bd2b7545e8604750ac053ff4f7a4",
+      "size": 136847360,
+      "modifiedAt": "2026-11-12T02:56:24.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-ES-01001.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjRlN2NiMTE0ZjBlNi0yNjA4MjcxLUNJRS1DTy1aWi1NTy1FUy0wMTAwMS5ydnQ",
+      "sha256": "4e7cb114f0e648851b5621aef49521645155747114392efcb3a9d80959247761",
+      "size": 47190016,
+      "modifiedAt": "2026-11-12T02:56:40.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-ES-01002.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRmZjMWZlNGQ5MjBhOC0yNjA4MjcxLUNJRS1DTy1aWi1NTy1FUy0wMTAwMi5ydnQ",
+      "sha256": "fc1fe4d920a8d4e23c2eafbb8d04405f2d5c68e0aa537bc338a521a97bb4f45e",
+      "size": 34766848,
+      "modifiedAt": "2026-11-12T02:55:54.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-ES-01003.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjJiNGFjMzExYWIxZC0yNjA4MjcxLUNJRS1DTy1aWi1NTy1FUy0wMTAwMy5ydnQ",
+      "sha256": "2b4ac311ab1d25bf9e0f314f03a6e3b165df6ad19801b9c4d63409e40605a928",
+      "size": 35753984,
+      "modifiedAt": "2026-11-12T02:56:08.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-ES-01004.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjFjY2JmMjk1NTBhMC0yNjA4MjcxLUNJRS1DTy1aWi1NTy1FUy0wMTAwNC5ydnQ",
+      "sha256": "1ccbf29550a001e355ac7afc5b4e5500c0a71a9d5b880319b46eb678562596b9",
+      "size": 39632896,
+      "modifiedAt": "2026-11-12T02:56:46.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-ES-01100.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjMwNmU2Nzk2NTZmOS0yNjA4MjcxLUNJRS1DTy1aWi1NTy1FUy0wMTEwMC5ydnQ",
+      "sha256": "306e679656f9355ef0f9ae5208b5601cd685ea3480258d3b324d52556ea05903",
+      "size": 40239104,
+      "modifiedAt": "2026-11-12T02:56:52.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-ME-01001.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjlkYzM3ODI0ZjZmMi0yNjA4MjcxLUNJRS1DTy1aWi1NTy1NRS0wMTAwMS5ydnQ",
+      "sha256": "9dc37824f6f2feff0b0eb41f5b56c0d3dc6806e6955549a9d24979614e947e23",
+      "size": 25923584,
+      "modifiedAt": "2026-11-12T02:56:42.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-ME-01002.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjI4OTkzOTcwNGNjNC0yNjA4MjcxLUNJRS1DTy1aWi1NTy1NRS0wMTAwMi5ydnQ",
+      "sha256": "289939704cc49d3f6828ced71116f48b2a4d615e65cbcac6d006879f569e1638",
+      "size": 7868416,
+      "modifiedAt": "2026-11-12T02:56:20.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-ME-01003.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjRlNGYyN2IxZjIwZi0yNjA4MjcxLUNJRS1DTy1aWi1NTy1NRS0wMTAwMy5ydnQ",
+      "sha256": "4e4f27b1f20ff4b743df3f6ffd3c4c3664a8c214a633cd8e05695dd1fb418a76",
+      "size": 8749056,
+      "modifiedAt": "2026-11-12T02:56:08.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-PV-01100.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjllOGU5N2U0MDEzNS0yNjA4MjcxLUNJRS1DTy1aWi1NTy1QVi0wMTEwMC5ydnQ",
+      "sha256": "9e8e97e4013531d9fa92d8811494f3d470c65c253bcf8037ce66e3945c5e297c",
+      "size": 21110784,
+      "modifiedAt": "2026-11-12T02:56:04.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-SA-01001.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjM5ZmRkMTBkYjE5Ni0yNjA4MjcxLUNJRS1DTy1aWi1NTy1TQS0wMTAwMS5ydnQ",
+      "sha256": "39fdd10db19620dbb28eb099a85393bab73a170de721f44ff0b446a717af945a",
+      "size": 24772608,
+      "modifiedAt": "2026-11-12T02:56:56.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-SA-01002.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjkxNzMzNGI2OGNjYi0yNjA4MjcxLUNJRS1DTy1aWi1NTy1TQS0wMTAwMi5ydnQ",
+      "sha256": "917334b68ccb91ba42109fb917ea95b72675f18636bcb83826988a5df55ac25f",
+      "size": 21807104,
+      "modifiedAt": "2026-11-12T02:57:02.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-SA-01003.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjRlMGEzNjRhODQyNi0yNjA4MjcxLUNJRS1DTy1aWi1NTy1TQS0wMTAwMy5ydnQ",
+      "sha256": "4e0a364a8426fbf97bdaf183d735f1f668a7400224ce097d0bf09aa7e050dcc9",
+      "size": 21524480,
+      "modifiedAt": "2026-11-12T02:56:56.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-SA-01004.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjEwYzYzZTQ2Nzk4NS0yNjA4MjcxLUNJRS1DTy1aWi1NTy1TQS0wMTAwNC5ydnQ",
+      "sha256": "10c63e467985376f06d5cbbcf006816eb8e16a305decc054a9393829c000e370",
+      "size": 18423808,
+      "modifiedAt": "2026-11-12T02:56:58.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-SA-01100.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjg3Y2I2MmE0YjRhMi0yNjA4MjcxLUNJRS1DTy1aWi1NTy1TQS0wMTEwMC5ydnQ",
+      "sha256": "87cb62a4b4a277af3b9d68fbeb7716e32bc542a22fdb64bee72c9804bf1f128a",
+      "size": 51585024,
+      "modifiedAt": "2026-11-12T02:56:12.000Z",
+      "status": "success"
+    },
+    {
+      "name": "2608271-CIE-CO-ZZ-MO-ZZ-00001.rvt",
+      "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmlzb3ItYmltLXBkY2ktYzRmMTM5MmE5MDFhL21vZGVscyUyRjM0YzU1ZWFlMmQwOS0yNjA4MjcxLUNJRS1DTy1aWi1NTy1aWi0wMDAwMS5ydnQ",
+      "sha256": "34c55eae2d097c3779f9cc333a8f7519eb6a1de70a952c3c11b391cdaf2b928c",
+      "size": 6045696,
+      "modifiedAt": "2026-11-12T02:57:02.000Z",
+      "status": "success"
+    }
+  ],
+  "skipped": [],
+  "federationMode": "shared-coordinates",
+  "updatedAt": "2026-11-12T17:14:26.422Z"
+}
